@@ -35,4 +35,6 @@ public abstract class Enemy: MonoBehaviour
     {
         state.m_IsDead = false;
     }
+
+    public abstract void TakeDamage();
 }

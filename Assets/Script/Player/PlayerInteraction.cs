@@ -4,18 +4,14 @@ using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    [SerializeField] private InventoryController m_Inventory;
-    
-    public GameObject m_CurrentInterObj;
-    public Door m_DoorScript;
-    public Item m_ItemScript;
+    private InventoryController m_Inventory;
+    private GameObject m_CurrentInterObj;
+    private Door m_DoorScript;
+    private Item m_ItemScript;
 
     void Awake()
     {
-        if (m_Inventory == null)
-        {
-            m_Inventory = new InventoryController();
-        }
+        m_Inventory = (InventoryController)gameObject.GetComponent<InventoryController>();
     }
 
     // Update is called once per frame
@@ -25,6 +21,7 @@ public class PlayerInteraction : MonoBehaviour
         {
             if(m_CurrentInterObj.CompareTag("Door"))
             {
+                m_DoorScript = (Door)m_CurrentInterObj.GetComponent<Door>();
                 if(m_DoorScript.state.m_IsLocked)
                 {
                     bool res;
@@ -37,26 +34,23 @@ public class PlayerInteraction : MonoBehaviour
                 }
             }
             if(m_CurrentInterObj.CompareTag("Item"))
-            {   
+            {
+                m_ItemScript = (Item)m_CurrentInterObj.GetComponent<Item>();
                 if (m_ItemScript.state.m_IsKey)
                 {
                     m_Inventory.addKey(m_ItemScript.state.m_Type);
-                    Destroy(m_CurrentInterObj);
                 }
                 else
                 {
                     bool res;
                     res = m_Inventory.addPotion();
-                    if(res)
-                    {
-                        Destroy(m_CurrentInterObj);
-                    }
-                    else
-                    {
-                        //show potions is full
-                    }
                 }
             }
         }
+    }
+
+    void OnEnterTrigger2D(Collider2D other)
+    {
+        m_CurrentInterObj = other.gameObject;
     }
 }

@@ -11,7 +11,9 @@ public class FlyingEnemy : Enemy
     public float m_MaxDistance;// to be tweeked
     public Transform Player;
     public float m_MovementSmoothing;
+    public float thrust; //to be tweeked
 
+    private BoxCollider2D box;
     private float m_WaitTime;
     private int m_facingRight;
     private int m_isAbove;
@@ -24,13 +26,18 @@ public class FlyingEnemy : Enemy
     {
         m_WaitTime = m_StartWaitTime;
         Player = GameObject.FindWithTag("Player").transform;
+
+        box = (BoxCollider2D)GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        Hover();
-        Attack();
+        if (!state.m_IsDead)
+        {
+            Hover();
+            Attack();
+        }
     }
 
     void Hover()
@@ -109,13 +116,19 @@ public class FlyingEnemy : Enemy
         }
     }
 
-    public void LoadObject()
+    public override void TakeDamage()
     {
-        
-    }
-
-    public void SaveObject()
-    {
-        
+        Vector2 direction = new Vector2(-m_facingRight,-m_isAbove);
+        if (HP > 0)
+        {
+            --HP;
+            m_RigidBody2D.AddForce(direction * thrust);
+        }
+        else
+        {
+            state.m_IsDead = true;
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            box.enabled = false;
+        }
     }
 }

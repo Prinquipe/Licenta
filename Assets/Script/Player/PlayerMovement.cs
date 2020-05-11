@@ -16,35 +16,33 @@ public class PlayerMovement : MonoBehaviour
 
     public PlayerState state;
 
-    public InventoryController invController;
-
     public Transform startPosition;
 
     public Animator animator;
 
     public float dashTimer;
 
-    public float maxDashTime = 1f;
+    public float maxDashTime;
 
     private float horizontalMove = 0f;
 
     public DashState dashState;
 
-    private bool jump = false;
+    public bool jump = false;
 
-    private bool doubleJump = false;
+    public bool doubleJump = false;
 
     private float doubleJumpTime;
 
     public const float maxDoubleDashTime = .5f;
 
-    private bool dash = false;
+    public bool dash = false;
 
     [SerializeField] public float runSpeed;
     // Update is called once per frame
 
     void Update()
-    {
+    { 
         if (state.hasDashAbility)
         {
             Dash();
@@ -127,6 +125,11 @@ public class PlayerMovement : MonoBehaviour
                 }
                 break;
         }
+    }
+
+    public void Attack(bool attack)
+    {
+        animator.SetBool("isAttacking", attack);
     }
 
     void FixedUpdate()

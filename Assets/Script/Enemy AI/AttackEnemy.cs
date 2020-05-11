@@ -16,6 +16,7 @@ public class AttackEnemy : Enemy
     public Transform m_startPosition;
     public Transform m_stopPosition;
 
+    private BoxCollider2D box;
     private float m_WaitTime;
     public bool m_facingRight = true;
     private bool m_AttackMode = false;
@@ -37,6 +38,7 @@ public class AttackEnemy : Enemy
         m_Player = GameObject.FindWithTag("Player").transform;
         m_currentPosition = m_startPosition;
         m_WaitTime = m_StartWaitTime;
+        box = (BoxCollider2D)GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
@@ -152,6 +154,20 @@ public class AttackEnemy : Enemy
         else
         {
             //face left
+        }
+    }
+
+    public override void TakeDamage()
+    {
+        if (HP > 0)
+        {
+            --HP;
+        }
+        else
+        {
+            state.m_IsDead = true;
+            gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            box.enabled = false;
         }
     }
 }

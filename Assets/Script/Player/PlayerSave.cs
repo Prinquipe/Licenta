@@ -12,11 +12,19 @@ public class PlayerSave: MonoBehaviour,Saveable
 
     public GameObject player;
 
+    public GameObject playerInv;
+
     private PlayerState playerState;
 
     private InventoryState inState;
 
+    private PlayerMovement playerMov;
+
+    private InventoryController inv;
+
     private string path;
+
+    private readonly object playerSaveLock = new object();
 
     [Header("Player Event")]
     [Space]
@@ -32,55 +40,57 @@ public class PlayerSave: MonoBehaviour,Saveable
         GameMgr.setSavePath(1);
         path = GameMgr.savePath;
         LoadObject();
-        PlayerMovement pl =(PlayerMovement)player.GetComponent<PlayerMovement>();
-        playerState = pl.state;
-        inState = pl.invController.state;
-        wrap = new PlayerWrapper(playerState,inState);
-
+        playerMov =(PlayerMovement)player.GetComponent<PlayerMovement>();
+        inv = (InventoryController)playerInv.GetComponent<InventoryController>();
+        playerState = playerMov.state;
+        inState = inv.state;
+        wrap = new PlayerWrapper(playerState, inState);
     }
 
     public void SaveObject()
     {
-        string destination = path + "/player.dat";
-        FileStream file;
-        if (File.Exists(destination))
+        lock (playerSaveLock)
         {
-            File.Delete(destination);
-            file = File.OpenWrite(destination);
-        }
-        else
-        {
-            file = File.OpenWrite(destination);
-        }
+            string destination = path + "/player.dat";
+            FileStream file;
+            if (File.Exists(destination))
+            {
+                File.Delete(destination);
+                file = File.OpenWrite(destination);
+            }
+            else
+            {
+                file = File.OpenWrite(destination);
+            }
 
-        BinaryFormatter bf = new BinaryFormatter();
-        Debug.Log(wrap.inState.BronzeKey);
-        bf.Serialize(file, wrap);
+            BinaryFormatter bf = new BinaryFormatter();
+            bf.Serialize(file, wrap);
+        }
     }
 
     public void LoadObject()
     {
-        string destination = path + "/player.dat";
-        FileStream file;
-        if (File.Exists(destination))
+        lock (playerSaveLock)
         {
-            file = File.OpenRead(destination);
+            string destination = path + "/player.dat";
+            FileStream file;
+            if (File.Exists(destination))
+            {
+                file = File.OpenRead(destination);
+            }
+            else
+            {
+                Debug.LogError("File not found");
+                return;
+            }
+
+            BinaryFormatter bf = new BinaryFormatter();
+
+            PlayerWrapper ass = (PlayerWrapper)bf.Deserialize(file);
+
+            playerMov.state = ass.playerState;
+            inv.state = ass.inState;
         }
-        else
-        {
-            Debug.LogError("File not found");
-            return;
-        }
-
-        BinaryFormatter bf = new BinaryFormatter();
-
-        PlayerWrapper ass = (PlayerWrapper)bf.Deserialize(file);
-
-
-        PlayerMovement pl = (PlayerMovement)player.GetComponent<PlayerMovement>();
-        pl.state = ass.playerState;
-        Debug.Log(ass.inState.BronzeKey);
-        pl.invController.state = ass.inState;
     }
 
     public void OnRequestSaveEvent()

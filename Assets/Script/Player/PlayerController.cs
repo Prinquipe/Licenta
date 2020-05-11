@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
 	public float m_JumpForce;
 	public float m_DoubleJumpForce;
 	public float m_DashSpeed;
+	public GameObject playerAttack;
 	[Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;  // How much to smooth out the movement
 	[SerializeField] private bool m_AirControl = false;                         // Whether or not a player can steer while jumping;
 	[SerializeField] public LayerMask m_WhatIsGround;                          // A mask determining what is ground to the character
@@ -75,6 +76,7 @@ public class PlayerController : MonoBehaviour
 	public void Move(float move, bool dash, bool jump,bool doubleJump)
 	{
 		Vector2 targetVelocity;
+
 		if (dash)
 		{
 

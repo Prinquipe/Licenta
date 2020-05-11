@@ -18,6 +18,8 @@ public class AssetManager : MonoBehaviour, Saveable
     private Enemy[] enemies;
     private Door[] doors;
 
+    private readonly object assetLock = new object();
+
     public string SavePath;
 
     [Header("Asset Event")]
@@ -44,59 +46,64 @@ public class AssetManager : MonoBehaviour, Saveable
     //Override
     public void SaveObject()
     {
-        AssetWrapper wrap = new AssetWrapper();
-        string destination = SavePath + "/" + sceneName + ".dat";
-        FileStream file;
-        if (File.Exists(destination))
+        lock (assetLock)
         {
-            File.Delete(destination);
-            file = File.OpenWrite(destination);
-        }
-        else
-        {
-            file = File.OpenWrite(destination);
-        }
-        
-        foreach (Item item in items)
-        {
-            wrap.Push(item.state);
-        }
+            AssetWrapper wrap = new AssetWrapper();
+            string destination = SavePath + "/" + sceneName + ".dat";
+            FileStream file;
+            if (File.Exists(destination))
+            {
+                File.Delete(destination);
+                file = File.OpenWrite(destination);
+            }
+            else
+            {
+                file = File.OpenWrite(destination);
+            }
 
-        foreach (Enemy item in enemies)
-        {
-            wrap.Push(item.state);
+            foreach (Item item in items)
+            {
+                wrap.Push(item.state);
+            }
+
+            foreach (Enemy item in enemies)
+            {
+                wrap.Push(item.state);
+            }
+
+            foreach (Door item in doors)
+            {
+                wrap.Push(item.state);
+            }
+
+            BinaryFormatter bf = new BinaryFormatter();
+
+            bf.Serialize(file, wrap);
         }
-
-        foreach (Door item in doors)
-        {
-            wrap.Push(item.state);
-        }
-
-        BinaryFormatter bf = new BinaryFormatter();
-
-        bf.Serialize(file, wrap);
     }
 
     public void LoadObject()
     {
-        string destination = SavePath + "/"+sceneName+".dat";
-        FileStream file;
-
-        if (File.Exists(destination))
+        lock (assetLock)
         {
-            file = File.OpenRead(destination);
+            string destination = SavePath + "/" + sceneName + ".dat";
+            FileStream file;
+
+            if (File.Exists(destination))
+            {
+                file = File.OpenRead(destination);
+            }
+            else
+            {
+                Debug.Log("File not found. First Time in area");
+                return;
+            }
+
+            BinaryFormatter bf = new BinaryFormatter();
+
+            AssetWrapper ass = (AssetWrapper)bf.Deserialize(file);
+            UnWrap(ass);
         }
-        else
-        {
-            Debug.Log("File not found. First Time in area");
-            return;
-        }
-
-        BinaryFormatter bf = new BinaryFormatter();
-
-        AssetWrapper ass = (AssetWrapper) bf.Deserialize(file);
-
-        UnWrap(ass);
     }
 
     void UnWrap(AssetWrapper ass)
