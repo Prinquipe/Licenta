@@ -78,6 +78,7 @@ public class PlayerAttack : MonoBehaviour
     {
         GameObject enemy;
         Enemy enemyScript;
+        Debug.Log("Attacked");
         if(other.CompareTag("Enemy"))
         {
             enemy = other.gameObject;

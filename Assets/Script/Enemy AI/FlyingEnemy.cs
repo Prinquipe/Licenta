@@ -12,6 +12,7 @@ public class FlyingEnemy : Enemy
     public Transform Player;
     public float m_MovementSmoothing;
     public float thrust; //to be tweeked
+    public const int PLAYER_DAMAGE = 1;
 
     private BoxCollider2D box;
     private float m_WaitTime;
@@ -64,7 +65,6 @@ public class FlyingEnemy : Enemy
         {
             m_AttackMode = true;
             facePlayer();
-            Debug.Log("X=" + m_facingRight + "\nY=" + m_isAbove);
             targetVelocity = new Vector2(-m_facingRight * m_Speed * Time.deltaTime, -m_isAbove * m_Speed * Time.deltaTime);
             m_RigidBody2D.velocity = Vector2.SmoothDamp(m_RigidBody2D.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
         }
@@ -81,12 +81,12 @@ public class FlyingEnemy : Enemy
     void facePlayer()
     {
         bool right = true;
-        if (transform.position.x - Player.position.x > .5f)
+        if (transform.position.x - Player.position.x > .25f)
         {
             m_facingRight = 1;
             right = true;
         }
-        else if (transform.position.x - Player.position.x < .5f)
+        else if (transform.position.x - Player.position.x < .25f)
         {
             m_facingRight = -1;
             right = false;
@@ -96,11 +96,11 @@ public class FlyingEnemy : Enemy
             m_facingRight = 0;
         }
 
-        if (transform.position.y - Player.position.y > .5f)
+        if (transform.position.y - Player.position.y > .25f)
         {
             m_isAbove = 1;
         }
-        else if (transform.position.y - Player.position.y < .5f)
+        else if (transform.position.y - Player.position.y < .25f)
         {
             m_isAbove = -1;
         }
@@ -129,6 +129,21 @@ public class FlyingEnemy : Enemy
             state.m_IsDead = true;
             gameObject.GetComponent<SpriteRenderer>().enabled = false;
             box.enabled = false;
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        PlayerMovement player;
+        PlayerInteraction inter;
+        GameObject collideObject;
+        Debug.Log("Attacked");
+        if (other.CompareTag("PlayerAttack"))
+        {
+            collideObject = other.gameObject;
+            inter = (PlayerInteraction)collideObject.GetComponent<PlayerInteraction>();
+            player = inter.GetPlayerMovement();
+            player.TakeDamage(PLAYER_DAMAGE);
         }
     }
 }

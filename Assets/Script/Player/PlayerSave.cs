@@ -39,9 +39,9 @@ public class PlayerSave: MonoBehaviour,Saveable
         }
         GameMgr.setSavePath(1);
         path = GameMgr.savePath;
-        LoadObject();
         playerMov =(PlayerMovement)player.GetComponent<PlayerMovement>();
         inv = (InventoryController)playerInv.GetComponent<InventoryController>();
+        LoadObject();
         playerState = playerMov.state;
         inState = inv.state;
         wrap = new PlayerWrapper(playerState, inState);

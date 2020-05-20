@@ -17,7 +17,7 @@ public abstract class Enemy: MonoBehaviour
     {
         if(state.m_IsDead)
         {
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 

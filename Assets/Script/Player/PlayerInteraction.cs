@@ -4,41 +4,47 @@ using UnityEngine;
 
 public class PlayerInteraction : MonoBehaviour
 {
+    public GameObject parent;
+
     private InventoryController m_Inventory;
     private GameObject m_CurrentInterObj;
     private Door m_DoorScript;
     private Item m_ItemScript;
 
     void Awake()
-    {
+    { 
         m_Inventory = (InventoryController)gameObject.GetComponent<InventoryController>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.E) && m_CurrentInterObj)
+        if(m_CurrentInterObj != null)
         {
-            if(m_CurrentInterObj.CompareTag("Door"))
+            if (Input.GetKeyDown(KeyCode.E) && m_CurrentInterObj)
             {
-                m_DoorScript = (Door)m_CurrentInterObj.GetComponent<Door>();
-                if(m_DoorScript.state.m_IsLocked)
+                if (m_CurrentInterObj.CompareTag("Door"))
                 {
-                    bool res;
-                    res = m_Inventory.hasKey(m_DoorScript.state.m_Type);
-                    if(res)
+                    m_DoorScript = (Door)m_CurrentInterObj.GetComponent<Door>();
+                    if (m_DoorScript.state.m_IsLocked)
                     {
-                        m_Inventory.consumeKey(m_DoorScript.state.m_Type);
-                        m_DoorScript.Open();
+                        bool res;
+                        res = m_Inventory.hasKey(m_DoorScript.state.m_Type);
+                        if (res)
+                        {
+                            m_Inventory.consumeKey(m_DoorScript.state.m_Type);
+                            m_DoorScript.Open();
+                        }
                     }
                 }
-            }
-            if(m_CurrentInterObj.CompareTag("Item"))
-            {
-                m_ItemScript = (Item)m_CurrentInterObj.GetComponent<Item>();
-                if (m_ItemScript.state.m_IsKey)
+
+                if (m_CurrentInterObj.CompareTag("Item"))
                 {
-                    m_Inventory.addKey(m_ItemScript.state.m_Type);
+                    m_ItemScript = (Item)m_CurrentInterObj.GetComponent<Item>();
+                    if (m_ItemScript.state.m_IsKey)
+                    {
+                        m_Inventory.addKey(m_ItemScript.state.m_Type);
+                    }
                 }
                 else
                 {
@@ -46,7 +52,12 @@ public class PlayerInteraction : MonoBehaviour
                     res = m_Inventory.addPotion();
                 }
             }
-        }
+        }        
+    }
+
+    public PlayerMovement GetPlayerMovement()
+    {
+        return (PlayerMovement)parent.GetComponent<PlayerMovement>();
     }
 
     void OnEnterTrigger2D(Collider2D other)

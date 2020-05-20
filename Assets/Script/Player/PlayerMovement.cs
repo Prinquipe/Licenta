@@ -41,6 +41,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] public float runSpeed;
     // Update is called once per frame
 
+    void Awake()
+    {
+        if(state.HP == 0)
+        {
+            state.HP = state.currentMaxHP;
+        }
+    }
+
     void Update()
     { 
         if (state.hasDashAbility)
@@ -130,6 +138,22 @@ public class PlayerMovement : MonoBehaviour
     public void Attack(bool attack)
     {
         animator.SetBool("isAttacking", attack);
+    }
+
+    public void TakeDamage(int damageValue)
+    {
+        if (!damaged)
+        {
+            if (state.HP > 0)
+            {
+                Debug.Log("TakeDamage");
+                state.HP -= damageValue;
+            }
+            else
+            {
+                //die
+            }
+        }
     }
 
     void FixedUpdate()
