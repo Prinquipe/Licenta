@@ -5,63 +5,69 @@ using UnityEngine;
 public class PlayerInteraction : MonoBehaviour
 {
     public GameObject parent;
+    public const float I_FRAME_TIME = 2f;
 
     private InventoryController m_Inventory;
     private GameObject m_CurrentInterObj;
+    private PlayerMovement playerMov;
+    private SpriteRenderer Renderer;
     private Door m_DoorScript;
     private Item m_ItemScript;
+    private float IFrameTimer;
+    private const float BLINK_TIMER = 0.2f;
+    private float BlinkTimer;
+    private bool blink;
+    private bool damaged;
+
 
     void Awake()
-    { 
+    {
+        IFrameTimer = I_FRAME_TIME;
+        BlinkTimer = 0;
+        damaged = false;
         m_Inventory = (InventoryController)gameObject.GetComponent<InventoryController>();
+        playerMov = (PlayerMovement)parent.GetComponent<PlayerMovement>();
+        Renderer = (SpriteRenderer)parent.GetComponent<SpriteRenderer>();
+        blink = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(m_CurrentInterObj != null)
+        
+        if(damaged)
         {
-            if (Input.GetKeyDown(KeyCode.E) && m_CurrentInterObj)
+            if(IFrameTimer >= 0f)
             {
-                if (m_CurrentInterObj.CompareTag("Door"))
+                IFrameTimer -= Time.deltaTime;
+                
+                if(BlinkTimer < BLINK_TIMER)
                 {
-                    m_DoorScript = (Door)m_CurrentInterObj.GetComponent<Door>();
-                    if (m_DoorScript.state.m_IsLocked)
-                    {
-                        bool res;
-                        res = m_Inventory.hasKey(m_DoorScript.state.m_Type);
-                        if (res)
-                        {
-                            m_Inventory.consumeKey(m_DoorScript.state.m_Type);
-                            m_DoorScript.Open();
-                        }
-                    }
-                }
-
-                if (m_CurrentInterObj.CompareTag("Item"))
-                {
-                    m_ItemScript = (Item)m_CurrentInterObj.GetComponent<Item>();
-                    if (m_ItemScript.state.m_IsKey)
-                    {
-                        m_Inventory.addKey(m_ItemScript.state.m_Type);
-                    }
+                    BlinkTimer += Time.deltaTime;
                 }
                 else
                 {
-                    bool res;
-                    res = m_Inventory.addPotion();
+                    BlinkTimer = 0f;
+                    blink = !blink;
+                    Renderer.enabled = blink;
                 }
             }
-        }        
+            else
+            {
+                IFrameTimer = I_FRAME_TIME;
+                damaged = false;
+                Renderer.enabled = true;
+                blink = true;
+            }
+        }
     }
 
-    public PlayerMovement GetPlayerMovement()
+    public void TakeDamage(int i)
     {
-        return (PlayerMovement)parent.GetComponent<PlayerMovement>();
-    }
-
-    void OnEnterTrigger2D(Collider2D other)
-    {
-        m_CurrentInterObj = other.gameObject;
+        if (!damaged)
+        {
+            playerMov.TakeDamage(i);
+            damaged = true;
+        }
     }
 }

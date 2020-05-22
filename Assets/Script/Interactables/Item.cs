@@ -11,6 +11,10 @@ public class Item : MonoBehaviour, Interactable
 
     private int eventCalls = 2;
 
+    private bool PlayerEntered;
+
+    private InventoryController ctrl;
+
     [Header("Event")]
     [Space]
 
@@ -20,6 +24,16 @@ public class Item : MonoBehaviour, Interactable
     {
         if (RequestSaveEvent == null)
             RequestSaveEvent = new UnityEvent();
+        PlayerEntered = false;
+    }
+
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.E) && PlayerEntered)
+        {
+            RemoveItem();
+            ctrl.addKey(state.m_Type);
+        }
     }
 
     void Start()
@@ -50,21 +64,30 @@ public class Item : MonoBehaviour, Interactable
         state = _state;
     }
 
+    public void RemoveItem()
+    {
+        state.m_IsPickedUp = true;
+        RequestSaveEvent.Invoke();
+        gameObject.GetComponent<Renderer>().enabled = false;
+        gameObject.GetComponent<BoxCollider2D>().enabled = false;
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
-        GameObject interObj;
-        if (other.CompareTag("Player"))
+        Debug.Log("Area Entered");
+        if(other.CompareTag("PlayerDamage"))
         {
-            interObj = other.gameObject;
-            if (state.m_IsKey)
-            {
-                interObj.GetComponent<InventoryController>().addKey(state.m_Type);
-            }
+            ctrl = (InventoryController)other.gameObject.GetComponent<InventoryController>();
+            PlayerEntered = true;
+        }
+    }
 
-            state.m_IsPickedUp = true;
-            RequestSaveEvent.Invoke();
-            gameObject.GetComponent<Renderer>().enabled = false;
-            gameObject.GetComponent<BoxCollider2D>().enabled = false;
+    void OnTriggerExit2D(Collider2D other)
+    {
+        Debug.Log("Area Exited");
+        if (other.GetComponent("PlayerDamage"))
+        {
+            PlayerEntered = false;
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,6 +8,10 @@ public class PlayerAttack : MonoBehaviour
     BoxCollider2D attackBox;
 
     private bool meleeAttack;
+
+    public int PlayerDamage;
+
+    public static int AttackDamage = 1;
 
     public GameObject player;
 
@@ -20,9 +25,9 @@ public class PlayerAttack : MonoBehaviour
 
     public const float MELEE_ATTACK_TIME = 0.3f;
 
-    public const float BOX_ENABLE_START_TIME = 0.15f;
+    public const float BOX_ENABLE_START_TIME = 0.2f;
 
-    public const float BOX_ENABLE_END_TIME = 0.2f;
+    public const float BOX_ENABLE_END_TIME = 0.25f;
 
     private float mAttackTime;
 
@@ -53,12 +58,12 @@ public class PlayerAttack : MonoBehaviour
             {
                 mAttackTime += Time.deltaTime;
             }
-            else if(mAttackTime >= BOX_ENABLE_START_TIME && mAttackTime < BOX_ENABLE_END_TIME)
+            else if (mAttackTime >= BOX_ENABLE_START_TIME && mAttackTime < BOX_ENABLE_END_TIME)
             {
                 attackBox.enabled = true;
                 mAttackTime += Time.deltaTime;
             }
-            else if(mAttackTime >=BOX_ENABLE_END_TIME && mAttackTime < MELEE_ATTACK_TIME)
+            else if (mAttackTime >= BOX_ENABLE_END_TIME && mAttackTime < MELEE_ATTACK_TIME)
             {
                 attackBox.enabled = false;
                 mAttackTime += Time.deltaTime;
@@ -74,16 +79,8 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    void OnEnterTrigger2D(Collider2D other)
+    public void TakeDamage(int damage)
     {
-        GameObject enemy;
-        Enemy enemyScript;
-        Debug.Log("Attacked");
-        if(other.CompareTag("Enemy"))
-        {
-            enemy = other.gameObject;
-            enemyScript = (Enemy)enemy.GetComponent<Enemy>();
-            enemyScript.TakeDamage();
-        }
+        playerMov.TakeDamage(damage);
     }
 }

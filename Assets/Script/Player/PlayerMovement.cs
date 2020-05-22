@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿ using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using UnityEngine;
@@ -37,6 +37,7 @@ public class PlayerMovement : MonoBehaviour
     public const float maxDoubleDashTime = .5f;
 
     public bool dash = false;
+
 
     [SerializeField] public float runSpeed;
     // Update is called once per frame
@@ -142,17 +143,14 @@ public class PlayerMovement : MonoBehaviour
 
     public void TakeDamage(int damageValue)
     {
-        if (!damaged)
+        Debug.Log("TakeDamage");
+        if (state.HP > 0)
         {
-            if (state.HP > 0)
-            {
-                Debug.Log("TakeDamage");
-                state.HP -= damageValue;
-            }
-            else
-            {
-                //die
-            }
+            state.HP -= damageValue;
+        }
+        else
+        {
+            //die
         }
     }
 

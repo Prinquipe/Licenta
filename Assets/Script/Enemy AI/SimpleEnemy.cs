@@ -89,11 +89,11 @@ public class SimpleEnemy : Enemy
         }
    }
 
-   public override void TakeDamage()
+   public override void TakeDamage(int damage)
    {
+        HP -= damage;
         if(HP > 0)
         {
-            --HP;
         }
         else
         {

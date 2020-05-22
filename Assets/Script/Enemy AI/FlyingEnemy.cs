@@ -6,29 +6,33 @@ public class FlyingEnemy : Enemy
 {
     public int HP;
     public Transform m_startPosition;
-    public float m_Speed = 50f;//to be tweeked
+    public float m_Speed;//to be tweeked
     public const float m_StartWaitTime = 50f;//to be tweeked
     public float m_MaxDistance;// to be tweeked
     public Transform Player;
     public float m_MovementSmoothing;
     public float thrust; //to be tweeked
     public const int PLAYER_DAMAGE = 1;
+    public BoxCollider2D solidBox;
+    public BoxCollider2D triggerBox;
 
-    private BoxCollider2D box;
     private float m_WaitTime;
     private int m_facingRight;
     private int m_isAbove;
     private bool m_lastDirection = true;
     private bool m_AttackMode = false;
+    private const float IFRAME_TIME = 0.05f;
+    private float IFrameTime;
+    private bool damaged;
 
     public Rigidbody2D m_RigidBody2D;
 
     void Awake()
     {
+        damaged = false;
+        IFrameTime = IFRAME_TIME;
         m_WaitTime = m_StartWaitTime;
         Player = GameObject.FindWithTag("Player").transform;
-
-        box = (BoxCollider2D)GetComponent<BoxCollider2D>();
     }
 
     // Update is called once per frame
@@ -38,7 +42,19 @@ public class FlyingEnemy : Enemy
         {
             Hover();
             Attack();
-        }
+            if(damaged)
+            {
+                if(IFrameTime > 0)
+                {
+                    IFrameTime -= Time.deltaTime;
+                }
+                else
+                {
+                    IFrameTime = IFRAME_TIME;
+                    damaged = false;
+                }
+            }
+        } 
     }
 
     void Hover()
@@ -116,34 +132,60 @@ public class FlyingEnemy : Enemy
         }
     }
 
-    public override void TakeDamage()
+    public override void TakeDamage(int damage)
     {
+        Debug.Log("TakingDamage");
         Vector2 direction = new Vector2(-m_facingRight,-m_isAbove);
+        HP -= damage;
         if (HP > 0)
         {
-            --HP;
+            Debug.Log("ReduceHP");
             m_RigidBody2D.AddForce(direction * thrust);
         }
         else
         {
             state.m_IsDead = true;
             gameObject.GetComponent<SpriteRenderer>().enabled = false;
-            box.enabled = false;
+            solidBox.enabled = false;
+            triggerBox.enabled = false;
+            m_RigidBody2D.velocity = Vector2.zero;
         }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnEnterTrigger2D(Collider2D other)
     {
-        PlayerMovement player;
-        PlayerInteraction inter;
-        GameObject collideObject;
-        Debug.Log("Attacked");
-        if (other.CompareTag("PlayerAttack"))
+        Debug.Log(other.tag);
+        if (other.CompareTag("PlayerDamage"))
         {
-            collideObject = other.gameObject;
-            inter = (PlayerInteraction)collideObject.GetComponent<PlayerInteraction>();
-            player = inter.GetPlayerMovement();
-            player.TakeDamage(PLAYER_DAMAGE);
+            PlayerInteraction inter;
+            inter = (PlayerInteraction)other.gameObject.GetComponent<PlayerInteraction>();
+            inter.TakeDamage(PLAYER_DAMAGE);
+        }
+        else if (other.CompareTag("PlayerAttack"))
+        {
+            if (!damaged)
+            {
+                damaged = true;
+                TakeDamage(PlayerAttack.AttackDamage);
+            }
+        }
+    }
+
+    void OnTriggerStay2D(Collider2D other)
+    {
+        if (other.CompareTag("PlayerDamage"))
+        {
+            PlayerInteraction inter;
+            inter = (PlayerInteraction)other.gameObject.GetComponent<PlayerInteraction>();
+            inter.TakeDamage(PLAYER_DAMAGE);
+        }
+        else if (other.CompareTag("PlayerAttack"))
+        {
+            if (!damaged)
+            {
+                damaged = true;
+                TakeDamage(PlayerAttack.AttackDamage);
+            }
         }
     }
 }
