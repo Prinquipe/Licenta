@@ -16,6 +16,8 @@ public class PlayerMovement : MonoBehaviour
 
     public PlayerState state;
 
+    public static int MAXHP = 14;
+
     public Transform startPosition;
 
     public Animator animator;
