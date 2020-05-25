@@ -136,7 +136,7 @@ public class InventoryController: MonoBehaviour
         }
     }
 
-    void addCoin()
+    public void AddCoin(int amount)
     {
         
     }
