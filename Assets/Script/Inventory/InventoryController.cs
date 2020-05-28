@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class InventoryController: MonoBehaviour
@@ -7,7 +8,7 @@ public class InventoryController: MonoBehaviour
 
     public InventoryState state;
 
-    private int tempPouch;
+    public int tempPouch;
 
     public const int pouchTreshold = 100;
 
@@ -18,6 +19,42 @@ public class InventoryController: MonoBehaviour
     private const int MAXPOTIONS = 10;
 
     private const int MINPOTIONS = 0;
+
+    private bool reset;
+
+    private bool countDown;
+
+    void Awake()
+    {
+        reset = false;
+        countDown = false;
+        tempPouch = 0;
+    }
+
+    void Update()
+    {
+        if (reset)
+        {
+            reset = false;
+            tempTimer = startTempTimer;
+            countDown = true;
+        }
+
+        if (countDown)
+        {
+            if (tempTimer > 0)
+            {
+                tempTimer -= Time.deltaTime;
+            }
+            else
+            {
+                tempTimer = startTempTimer;
+                state.Pouch += tempPouch;
+                tempPouch = 0;
+                countDown = false;
+            }
+        }
+    }
 
     public void consumeKey(GameEnums.KEY_TYPE type)
     {
@@ -138,6 +175,8 @@ public class InventoryController: MonoBehaviour
 
     public void AddCoin(int amount)
     {
-        
+        Debug.Log("Add Coin "+ amount);
+        reset = true;
+        tempPouch += amount;
     }
 }

@@ -24,6 +24,7 @@ public class FlyingEnemy : Enemy
     private const float IFRAME_TIME = 0.05f;
     private float IFrameTime;
     private bool damaged;
+    private GoldPouch pouch;
 
     public Rigidbody2D m_RigidBody2D;
 
@@ -33,6 +34,7 @@ public class FlyingEnemy : Enemy
         IFrameTime = IFRAME_TIME;
         m_WaitTime = m_StartWaitTime;
         Player = GameObject.FindWithTag("Player").transform;
+        pouch = (GoldPouch)gameObject.GetComponent<GoldPouch>();
     }
 
     // Update is called once per frame
@@ -54,7 +56,7 @@ public class FlyingEnemy : Enemy
                     damaged = false;
                 }
             }
-        } 
+        }
     }
 
     void Hover()
@@ -144,6 +146,7 @@ public class FlyingEnemy : Enemy
         }
         else
         {
+            pouch.Empty();
             state.m_IsDead = true;
             gameObject.GetComponent<SpriteRenderer>().enabled = false;
             solidBox.enabled = false;

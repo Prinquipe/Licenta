@@ -14,14 +14,20 @@ public class GoldPouch : MonoBehaviour
     private bool Emptied;
 
 
+    void Awake()
+    {
+        Emptied = false;
+    }
+
     public void Empty()
     {
         if(!Emptied)
         {
-            spentCoins = CoinNumber;
             Emptied = true;
+            spentCoins = CoinNumber;
             while(spentCoins > 0)
             {
+
                 if (spentCoins >= 10)
                 {
                     Instantiate(TenCoin, gameObject.transform.position, Quaternion.identity);

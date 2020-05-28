@@ -134,7 +134,7 @@ public class PlayerController : MonoBehaviour
 			m_Grounded = false;
 			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce), ForceMode2D.Impulse);
 		}
-		else if(!m_Grounded && doubleJump	 && jumps>0)
+		else if(!m_Grounded && doubleJump && jumps>0)
         {
 			transform.parent = null;
 			m_Grounded = false;
