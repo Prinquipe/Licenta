@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class GameMgr
+public class GameMgr : MonoBehaviour
 {
     public static string savePath;
 
@@ -38,6 +38,4 @@ public class GameMgr
         }
         return _instance;
     }
-
-
 }
