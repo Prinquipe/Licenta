@@ -8,6 +8,8 @@ public class GameMgr : MonoBehaviour
 {
     public static string savePath;
 
+    public static bool loadGame = false;
+
     private static GameMgr _instance = null;
 
     private GameMgr()
