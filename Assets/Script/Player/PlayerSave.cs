@@ -5,6 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
 using UnityEngine.Events;
 using System.Security.Cryptography;
+using System;
 
 public class PlayerSave: MonoBehaviour,Saveable
 {
@@ -37,7 +38,7 @@ public class PlayerSave: MonoBehaviour,Saveable
         {
             AckPlayerSaveEvent = new UnityEvent();
         }
-        GameMgr.setSavePath(1);
+        GameMgr.setSavePath();
         path = GameMgr.savePath;
         playerMov =(PlayerMovement)player.GetComponent<PlayerMovement>();
         inv = (InventoryController)playerInv.GetComponent<InventoryController>();
@@ -65,6 +66,9 @@ public class PlayerSave: MonoBehaviour,Saveable
 
             BinaryFormatter bf = new BinaryFormatter();
             bf.Serialize(file, wrap);
+
+            DateTime now = DateTime.Now;
+            GameMgr.SetSlotDateTime(now);
         }
     }
 

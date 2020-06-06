@@ -37,7 +37,7 @@ public class AssetManager : MonoBehaviour, Saveable
         items = (Item[])GameObject.FindObjectsOfType(typeof(Item));
         enemies = (Enemy[])GameObject.FindObjectsOfType(typeof(Enemy));
         doors = (Door[])GameObject.FindObjectsOfType(typeof(Door));
-        GameMgr.setSavePath(1);
+        GameMgr.setSavePath();
         sceneName = gameObject.scene.name;
         SavePath = GameMgr.savePath;
         LoadObject();

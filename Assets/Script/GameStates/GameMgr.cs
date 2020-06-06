@@ -1,25 +1,31 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class GameMgr : MonoBehaviour
 {
     public static string savePath;
 
-    public static bool loadGame = false;
+    public static bool loadGame;
 
-    private static GameMgr _instance = null;
+    public static int lastSlot;
 
-    private GameMgr()
+    public static int currentSlot;
+
+    public static Resolution resolution;
+
+    public static float brightness;
+
+    public static int fullscreenMode;
+
+
+    public static void setSavePath()
     {
-        
-    }
-
-    public static void setSavePath(int slot)
-    {
-        string temp = Application.streamingAssetsPath + "/slot" + slot.ToString();
+        string temp = Application.streamingAssetsPath + "/slot" + currentSlot.ToString();
         Debug.Log(temp);
         if(!Directory.Exists(temp))
         {
@@ -32,12 +38,182 @@ public class GameMgr : MonoBehaviour
         }
     }
 
-    public static GameMgr getInstance()
+    void Awake()
     {
-        if(_instance == null)
+        if(gameObject.scene.name == "MainMenu")
         {
-            _instance = new GameMgr();
+            loadGame = false;
         }
-        return _instance;
+        string  res;
+
+        if(PlayerPrefs.HasKey("LastSlot"))
+        {
+            lastSlot = PlayerPrefs.GetInt("LastSlot");
+        }
+
+
+        if(PlayerPrefs.HasKey("Resolution"))
+        {
+            res = PlayerPrefs.GetString("Resolution");
+        }
+        else
+        {
+            resolution = Screen.currentResolution;
+            res = resolution.ToString();
+            PlayerPrefs.SetString("Resolution", resolution.ToString());
+        }
+
+        if (PlayerPrefs.HasKey("Brightness"))
+        {
+            brightness = PlayerPrefs.GetFloat("Brightness");
+        }
+        else
+        {
+            brightness = Screen.brightness;
+            PlayerPrefs.SetFloat("Brightness", brightness);
+        }
+
+        if(PlayerPrefs.HasKey("FullScreenMode"))
+        {
+            fullscreenMode = PlayerPrefs.GetInt("FullScreenMode");
+        }
+        else
+        {
+            if(Screen.fullScreen)
+            {
+                fullscreenMode = 1;
+            }
+            else
+            {
+                fullscreenMode = 0;
+            }
+
+            PlayerPrefs.SetInt("FullScreenMode",fullscreenMode);
+        }
+
+        ChangeSettings(res);
+    }
+
+    private void ChangeSettings(string res)
+    { 
+        Debug.Log(res);
+
+        string b = string.Empty;
+        int[] val =new int[3];
+        int j = 0;
+
+        for(int i = 0; i < res.Length; i++)
+        {
+            if (Char.IsDigit(res[i]))
+            {
+                b += res[i];
+            }
+            else
+            {
+                Debug.Log(b);
+                if (b.Length != 0)
+                { 
+                    val[j] = int.Parse(b);
+                    b = string.Empty;
+                    j++;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+        }
+
+        Resolution newRes = new Resolution();
+        newRes.width = val[0];
+        newRes.height = val[1];
+        newRes.refreshRate = Screen.currentResolution.refreshRate;
+
+        if (brightness != Screen.brightness)
+        {
+            Screen.brightness = brightness;
+        }
+
+        if(Screen.fullScreen)
+        {
+            if(fullscreenMode == 0)
+            {
+                Screen.fullScreen = false;
+                Screen.fullScreenMode = (FullScreenMode) 3;
+            }
+        }
+        else
+        {
+            if(fullscreenMode == 1)
+            {
+                Screen.fullScreen = true;
+                Screen.fullScreenMode = (FullScreenMode) 0;
+            }
+        }
+
+        if (fullscreenMode == 1)
+        {
+            Screen.SetResolution(newRes.width, newRes.height,true);
+        }
+        else
+        {
+            Screen.SetResolution(newRes.width, newRes.height, false);
+        }
+    }
+
+    public static void SetCurrentResolution(Resolution res)
+    {
+        resolution = res;
+        Screen.SetResolution(resolution.width, resolution.height,Screen.fullScreen);
+        PlayerPrefs.SetString("Resolution", resolution.ToString());
+    }
+
+    public static void SetBrightness(float bright)
+    {
+        brightness = bright;
+        Screen.brightness = brightness;
+        PlayerPrefs.SetFloat("Brightness", brightness);
+    }
+
+    public static Resolution GetCurrentRes()
+    {
+        return resolution;
+    }
+
+    public static float GetBrightness()
+    {
+        return brightness;
+    }
+
+    public static bool GetLoadGame()
+    {
+        return loadGame;
+    }
+
+    public static void SetLoadGame()
+    {
+        loadGame = true;
+    }
+
+    public static bool CheckIfEmpty(int i)
+    {
+        string temp = Application.streamingAssetsPath + "/slot" + i.ToString();
+        if (Directory.Exists(temp))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    public static string GetSlotDateTime(int i)
+    {
+        string slotTime = "SlotDateTime" + i;
+        return PlayerPrefs.GetString(slotTime);
+    }
+
+    public static void SetSlotDateTime(DateTime time)
+    {
+        string slotTime = "SlotDateTime" + currentSlot;
+        PlayerPrefs.SetString(slotTime, time.ToString());
     }
 }
