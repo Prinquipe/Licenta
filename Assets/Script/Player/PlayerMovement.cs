@@ -46,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Awake()
     {
+        Debug.Log(state.HP);
         if(state.HP == 0)
         {
             state.HP = state.currentMaxHP;

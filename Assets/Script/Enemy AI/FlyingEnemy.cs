@@ -57,6 +57,10 @@ public class FlyingEnemy : Enemy
                 }
             }
         }
+        else
+        {
+
+        }
     }
 
     void Hover()
@@ -191,4 +195,6 @@ public class FlyingEnemy : Enemy
             }
         }
     }
+
+
 }

@@ -20,6 +20,7 @@ public class BrightnessButton : MonoBehaviour, IPointerDownHandler
         CanModify = false;
         slider = (Slider)SliderObject.GetComponent<Slider>();
         slider.value = currentBright;
+        slider.interactable = false;
         savedSprite = button.gameObject.GetComponent<Image>().sprite;
     }
 
@@ -47,6 +48,7 @@ public class BrightnessButton : MonoBehaviour, IPointerDownHandler
         {
             currentBright = slider.value;
             CanModify = false;
+            slider.interactable = false;
         }
 
         GameMgr.SetBrightness(currentBright);
@@ -55,5 +57,6 @@ public class BrightnessButton : MonoBehaviour, IPointerDownHandler
     public void OnPointerDown(PointerEventData eventData)
     {
         CanModify = true;
+        slider.interactable = true;
     }
 }

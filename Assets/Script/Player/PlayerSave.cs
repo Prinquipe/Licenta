@@ -42,7 +42,15 @@ public class PlayerSave: MonoBehaviour,Saveable
         path = GameMgr.savePath;
         playerMov =(PlayerMovement)player.GetComponent<PlayerMovement>();
         inv = (InventoryController)playerInv.GetComponent<InventoryController>();
-        LoadObject();
+        if (!GameMgr.NewGame)
+        {
+            LoadObject();
+        }
+        else
+        {
+            SaveObject();
+            GameMgr.NewGame = false;
+        }
         playerState = playerMov.state;
         inState = inv.state;
         wrap = new PlayerWrapper(playerState, inState);
@@ -69,6 +77,8 @@ public class PlayerSave: MonoBehaviour,Saveable
 
             DateTime now = DateTime.Now;
             GameMgr.SetSlotDateTime(now);
+            GameMgr.SetLastSlot();
+            GameMgr.SetLastSlotScene(gameObject.scene.name);
         }
     }
 

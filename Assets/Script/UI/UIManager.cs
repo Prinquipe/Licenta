@@ -37,10 +37,11 @@ public class UIManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {   
         if (previousHP != PlayerMov.state.HP)
         {
             previousHP = PlayerMov.state.HP;
+            Debug.Log(previousHP);
             for (int i = 0; i < PlayerMovement.MAXHP; i++)
             {
                 if (i < PlayerMov.state.HP)

@@ -26,6 +26,7 @@ public class AssetManager : MonoBehaviour, Saveable
     [Space]
 
     public UnityEvent AckAssetSaveEvent;
+    public UnityEvent ResetEnemyEvent;
 
 
     void Awake()
@@ -34,13 +35,26 @@ public class AssetManager : MonoBehaviour, Saveable
         {
             AckAssetSaveEvent = new UnityEvent();
         }
+        if(ResetEnemyEvent == null)
+        {
+            ResetEnemyEvent = new UnityEvent();
+        }
         items = (Item[])GameObject.FindObjectsOfType(typeof(Item));
         enemies = (Enemy[])GameObject.FindObjectsOfType(typeof(Enemy));
         doors = (Door[])GameObject.FindObjectsOfType(typeof(Door));
         GameMgr.setSavePath();
         sceneName = gameObject.scene.name;
         SavePath = GameMgr.savePath;
-        LoadObject();
+        if (!GameMgr.NewGame)
+        {
+            LoadObject();
+        }
+        else
+        {
+            SaveObject();
+            GameMgr.NewGame = false;
+        }
+        ResetEnemyEvent.Invoke();
     }
 
     //Override

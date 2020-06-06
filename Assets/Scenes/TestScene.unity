@@ -2365,6 +2365,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fb5e5fdd6ab17c94ca9130d63a7e2444, type: 3}
+--- !u!114 &3583010749720969781 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3583010749720182407, guid: fb5e5fdd6ab17c94ca9130d63a7e2444,
+    type: 3}
+  m_PrefabInstance: {fileID: 3583010749720969780}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80553139c1e0429469ff958a73e17af2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4051271219181071832
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2711,6 +2723,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6507031376056545455, guid: 053e9ef15dfd0304a8517d3b1096f486,
         type: 3}
+      propertyPath: AckAssetSaveEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6507031376056545455, guid: 053e9ef15dfd0304a8517d3b1096f486,
+        type: 3}
+      propertyPath: ResetEnemyEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6507031376056545455, guid: 053e9ef15dfd0304a8517d3b1096f486,
+        type: 3}
       propertyPath: AckAssetSaveEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 966322906}
@@ -2718,6 +2740,36 @@ PrefabInstance:
         type: 3}
       propertyPath: AckAssetSaveEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6507031376056545455, guid: 053e9ef15dfd0304a8517d3b1096f486,
+        type: 3}
+      propertyPath: AckAssetSaveEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnAckSaveAssetEvent
+      objectReference: {fileID: 0}
+    - target: {fileID: 6507031376056545455, guid: 053e9ef15dfd0304a8517d3b1096f486,
+        type: 3}
+      propertyPath: ResetEnemyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6507031376056545455, guid: 053e9ef15dfd0304a8517d3b1096f486,
+        type: 3}
+      propertyPath: ResetEnemyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6507031376056545455, guid: 053e9ef15dfd0304a8517d3b1096f486,
+        type: 3}
+      propertyPath: ResetEnemyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3583010749720969781}
+    - target: {fileID: 6507031376056545455, guid: 053e9ef15dfd0304a8517d3b1096f486,
+        type: 3}
+      propertyPath: ResetEnemyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnEnemyResetEvent
+      objectReference: {fileID: 0}
+    - target: {fileID: 6507031376056545455, guid: 053e9ef15dfd0304a8517d3b1096f486,
+        type: 3}
+      propertyPath: ResetEnemyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 053e9ef15dfd0304a8517d3b1096f486, type: 3}

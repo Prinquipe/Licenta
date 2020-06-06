@@ -12,15 +12,21 @@ public class GameMgr : MonoBehaviour
 
     public static bool loadGame;
 
+    public static bool noLastSlot;
+
     public static int lastSlot;
 
     public static int currentSlot;
+
+    public static bool NewGame;
 
     public static Resolution resolution;
 
     public static float brightness;
 
     public static int fullscreenMode;
+
+    public static string newGameScene = "TestScene";
 
 
     public static void setSavePath()
@@ -38,17 +44,31 @@ public class GameMgr : MonoBehaviour
         }
     }
 
+    public static void DeleteSlot(int i)
+    {
+        string temp = Application.streamingAssetsPath + "/slot" + i.ToString();
+        if (Directory.Exists(temp))
+        {
+            Directory.Delete(temp);
+        }
+    }
+
     void Awake()
     {
-        if(gameObject.scene.name == "MainMenu")
-        {
-            loadGame = false;
-        }
+        loadGame = false;
+        NewGame = false;
         string  res;
 
         if(PlayerPrefs.HasKey("LastSlot"))
         {
+            Debug.Log("Got lastslot");
             lastSlot = PlayerPrefs.GetInt("LastSlot");
+            Debug.Log(lastSlot);
+            noLastSlot = false;
+        }
+        else
+        {
+            noLastSlot = true;
         }
 
 
@@ -195,6 +215,12 @@ public class GameMgr : MonoBehaviour
         loadGame = true;
     }
 
+    public static void SetLastSlot()
+    {
+        Debug.Log("SetLastSlot"+currentSlot);
+        PlayerPrefs.SetInt("LastSlot", currentSlot);
+    }
+
     public static bool CheckIfEmpty(int i)
     {
         string temp = Application.streamingAssetsPath + "/slot" + i.ToString();
@@ -215,5 +241,22 @@ public class GameMgr : MonoBehaviour
     {
         string slotTime = "SlotDateTime" + currentSlot;
         PlayerPrefs.SetString(slotTime, time.ToString());
+    }
+
+    public static string GetLastSlotScene(int i)
+    {
+        string slotScene = "LastSlotScene" + i;
+        return PlayerPrefs.GetString(slotScene);
+    }
+
+    public static void SetLastSlotScene(string scene)
+    {
+        string slotScene = "LastSlotScene" + currentSlot;
+        PlayerPrefs.SetString(slotScene,scene);
+    }
+
+    public static void SetCurrentSlot(int i)
+    {
+        currentSlot = i;
     }
 }

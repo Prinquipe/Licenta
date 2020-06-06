@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerState
 {
     // Start is called before the first frame update
-    public int HP;
+    public int HP = 5;
 
     public int currentMaxHP = 5;
 
