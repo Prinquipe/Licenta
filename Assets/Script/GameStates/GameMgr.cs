@@ -26,6 +26,8 @@ public class GameMgr : MonoBehaviour
 
     public static int fullscreenMode;
 
+    public static string mainMenu = "Main Menu";
+
     public static string newGameScene = "TestScene";
 
 
@@ -49,7 +51,7 @@ public class GameMgr : MonoBehaviour
         string temp = Application.streamingAssetsPath + "/slot" + i.ToString();
         if (Directory.Exists(temp))
         {
-            Directory.Delete(temp);
+            Directory.Delete(temp,true);
         }
     }
 

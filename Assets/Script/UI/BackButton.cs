@@ -7,7 +7,7 @@ public class BackButton : MonoBehaviour
 {
     public void OnBackButtonClicked()
     {
-        string Scene = "Main Menu";
+        string Scene = GameMgr.mainMenu;
         SceneManager.LoadScene(Scene);
     }
 }
