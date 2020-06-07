@@ -1087,6 +1087,18 @@ Transform:
   m_Father: {fileID: 915180887}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &804748176 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3583010749720182407, guid: fb5e5fdd6ab17c94ca9130d63a7e2444,
+    type: 3}
+  m_PrefabInstance: {fileID: 3583010749720969780}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80553139c1e0429469ff958a73e17af2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &855714888 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1566260608840354992, guid: 3ddea2f05f5447447be55397b9a4ec1f,
@@ -2625,6 +2637,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 64829239}
     m_Modifications:
+    - target: {fileID: 333683866, guid: 1104954f8f9325542a73e68671eba132, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 2065412913}
+    - target: {fileID: 333683866, guid: 1104954f8f9325542a73e68671eba132, type: 3}
+      propertyPath: RequestSaveEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1437092574}
+    - target: {fileID: 333683866, guid: 1104954f8f9325542a73e68671eba132, type: 3}
+      propertyPath: RequestSaveEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1325097429}
+    - target: {fileID: 333683866, guid: 1104954f8f9325542a73e68671eba132, type: 3}
+      propertyPath: ResetEnemyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1437092574}
+    - target: {fileID: 333683866, guid: 1104954f8f9325542a73e68671eba132, type: 3}
+      propertyPath: sprite
+      value: 
+      objectReference: {fileID: 1228976260460749551}
     - target: {fileID: 1228976261131710138, guid: 1104954f8f9325542a73e68671eba132,
         type: 3}
       propertyPath: m_Name
@@ -2633,12 +2665,12 @@ PrefabInstance:
     - target: {fileID: 1228976261131710139, guid: 1104954f8f9325542a73e68671eba132,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -10.06
       objectReference: {fileID: 0}
     - target: {fileID: 1228976261131710139, guid: 1104954f8f9325542a73e68671eba132,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -5.67
       objectReference: {fileID: 0}
     - target: {fileID: 1228976261131710139, guid: 1104954f8f9325542a73e68671eba132,
         type: 3}
@@ -2687,6 +2719,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1104954f8f9325542a73e68671eba132, type: 3}
+--- !u!1 &1228976260460749551 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6301329432080231242, guid: 1104954f8f9325542a73e68671eba132,
+    type: 3}
+  m_PrefabInstance: {fileID: 1228976260460749550}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1566260608521527544
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3442,11 +3480,11 @@ PrefabInstance:
         type: 3}
       propertyPath: ResetEnemyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 2078554466}
+      objectReference: {fileID: 804748176}
     - target: {fileID: 6507031376056545455, guid: 053e9ef15dfd0304a8517d3b1096f486,
         type: 3}
       propertyPath: ResetEnemyEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnAckSaveAssetEvent
+      value: OnEnemyResetEvent
       objectReference: {fileID: 0}
     - target: {fileID: 6507031376056545455, guid: 053e9ef15dfd0304a8517d3b1096f486,
         type: 3}
@@ -3520,12 +3558,12 @@ PrefabInstance:
     - target: {fileID: 8307370279177902913, guid: dbd56dadfb972f149a8aac700029d317,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.922973
+      value: -11.06
       objectReference: {fileID: 0}
     - target: {fileID: 8307370279177902913, guid: dbd56dadfb972f149a8aac700029d317,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -7.100324
+      value: -7.1
       objectReference: {fileID: 0}
     - target: {fileID: 8307370279177902913, guid: dbd56dadfb972f149a8aac700029d317,
         type: 3}

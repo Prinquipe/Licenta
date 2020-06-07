@@ -59,6 +59,7 @@ public class MenuManager : MonoBehaviour
         GameMgr.SetCurrentSlot(GameMgr.lastSlot);
         string loadScene = GameMgr.GetLastSlotScene(GameMgr.currentSlot);
         GameMgr.NewGame = true;
+        GameMgr.EnterFromMainMenu = true;
         SceneManager.LoadScene(loadScene);
     }
 }

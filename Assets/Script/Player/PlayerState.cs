@@ -18,15 +18,17 @@ public class PlayerState
 
     public string sceneName;
 
+    public string m_CheckPointName;
+
     public int money;
 
-    PlayerState(int _hp, int _curMaxHp, bool _double, bool _dash, string _name)
+    PlayerState(int _hp, int _curMaxHp, bool _double, bool _dash, string _name,string _checkName)
     {
         HP = _hp;
         currentMaxHP = _curMaxHp;
         hasDashAbility = _dash;
         hasDoubleJump = _double;
         sceneName = _name;
-
+        m_CheckPointName = _checkName;
     }
 }

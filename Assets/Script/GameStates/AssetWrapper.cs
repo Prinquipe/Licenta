@@ -20,14 +20,23 @@ public class AssetWrapper
     private int itemCount;
     private int curItemSize = INITSIZE;
 
+    public CheckPointState[] checkPoints;
+    private int checkPointCount;
+    private int curCheckPointSize = INITSIZE;
+
+
     public AssetWrapper()
     {
         enemies = new EnemyState[curEnemySize];
         enemyCount = 0;
+
         doors = new DoorState[curDoorSize];
         doorCount = 0;
+
         items = new ItemState[curItemSize];
         itemCount = 0;
+
+        checkPoints = new CheckPointState[curCheckPointSize];
     }
 
     public void Push(ItemState item)
@@ -92,6 +101,28 @@ public class AssetWrapper
             }
             doors[doorCount] = item;
             doorCount++;
+
+        }
+    }
+
+    public void Push(CheckPointState item)
+    {
+        if (checkPointCount < curCheckPointSize)
+        {
+            checkPoints[checkPointCount] = item;
+            checkPointCount++;
+        }
+        else
+        {
+            CheckPointState[] temp = checkPoints;
+            curCheckPointSize += INITSIZE;
+            checkPoints = new CheckPointState[curCheckPointSize];
+            for (int i = 0; i < temp.Length; i++)
+            {
+                checkPoints[i] = temp[i];
+            }
+            checkPoints[checkPointCount] = item;
+            checkPointCount++;
 
         }
     }

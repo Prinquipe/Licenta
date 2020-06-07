@@ -20,6 +20,8 @@ public class GameMgr : MonoBehaviour
 
     public static bool NewGame;
 
+    public static bool EnterFromMainMenu;
+
     public static Resolution resolution;
 
     public static float brightness;
@@ -60,8 +62,9 @@ public class GameMgr : MonoBehaviour
         loadGame = false;
         NewGame = false;
         string  res;
+        EnterFromMainMenu = false;
 
-        if(PlayerPrefs.HasKey("LastSlot"))
+        if (PlayerPrefs.HasKey("LastSlot"))
         {
             Debug.Log("Got lastslot");
             lastSlot = PlayerPrefs.GetInt("LastSlot");

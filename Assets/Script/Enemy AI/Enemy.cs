@@ -31,7 +31,7 @@ public abstract class Enemy: MonoBehaviour
         state = _state;
     }
 
-    public void OnEnemyResetEvent()
+    public void ResetEnemy()
     {
         state.m_IsDead = false;
     }

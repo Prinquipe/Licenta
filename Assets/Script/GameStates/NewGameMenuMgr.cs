@@ -90,12 +90,14 @@ public class NewGameMenuMgr : MonoBehaviour
         GameMgr.SetCurrentSlot(i);
         string loadScene = GameMgr.GetLastSlotScene(GameMgr.currentSlot);
         GameMgr.NewGame = true;
+        GameMgr.EnterFromMainMenu = true;
         SceneManager.LoadScene(loadScene);
     }
 
     void StartNewGame(int i)
     {
         GameMgr.SetCurrentSlot(i);
+        GameMgr.EnterFromMainMenu = false;
         SceneManager.LoadScene(GameMgr.newGameScene);
     }
 }

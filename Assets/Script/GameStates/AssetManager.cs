@@ -17,6 +17,7 @@ public class AssetManager : MonoBehaviour, Saveable
     private Item[] items;
     private Enemy[] enemies;
     private Door[] doors;
+    private CheckPointTrigger[] checkPoints;
 
     private readonly object assetLock = new object();
 
@@ -26,7 +27,7 @@ public class AssetManager : MonoBehaviour, Saveable
     [Space]
 
     public UnityEvent AckAssetSaveEvent;
-    public UnityEvent ResetEnemyEvent;
+    public UnityEvent AckResetEnemyEvent;
 
 
     void Awake()
@@ -35,13 +36,16 @@ public class AssetManager : MonoBehaviour, Saveable
         {
             AckAssetSaveEvent = new UnityEvent();
         }
-        if(ResetEnemyEvent == null)
+        if (AckResetEnemyEvent == null)
         {
-            ResetEnemyEvent = new UnityEvent();
+            AckResetEnemyEvent = new UnityEvent();
         }
+
         items = (Item[])GameObject.FindObjectsOfType(typeof(Item));
         enemies = (Enemy[])GameObject.FindObjectsOfType(typeof(Enemy));
         doors = (Door[])GameObject.FindObjectsOfType(typeof(Door));
+        checkPoints = (CheckPointTrigger[])GameObject.FindObjectsOfType(typeof(CheckPointTrigger));
+
         GameMgr.setSavePath();
         sceneName = gameObject.scene.name;
         SavePath = GameMgr.savePath;
@@ -54,7 +58,6 @@ public class AssetManager : MonoBehaviour, Saveable
             SaveObject();
             GameMgr.NewGame = false;
         }
-        ResetEnemyEvent.Invoke();
     }
 
     //Override
@@ -88,6 +91,11 @@ public class AssetManager : MonoBehaviour, Saveable
             foreach (Door item in doors)
             {
                 wrap.Push(item.state);
+            }
+
+            foreach (CheckPointTrigger check in checkPoints)
+            {
+                wrap.Push(check.state);
             }
 
             BinaryFormatter bf = new BinaryFormatter();
@@ -183,6 +191,25 @@ public class AssetManager : MonoBehaviour, Saveable
                 break;
             }
         }
+
+        for (int i = 0; i < ass.doors.Length; i++)
+        {
+            if (ass.checkPoints[i] != null)
+            {
+                foreach (CheckPointTrigger c in checkPoints)
+                {
+                    if (c.MatchID(ass.checkPoints[i].m_CheckID))
+                    {
+                        c.ChangeState(ass.checkPoints[i]);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
     }
 
     public void OnRequestSaveEvent()
@@ -190,5 +217,27 @@ public class AssetManager : MonoBehaviour, Saveable
         Debug.Log("Called");
         SaveObject();
         AckAssetSaveEvent.Invoke();
+    }
+
+    public void OnRequestEnemyResetEvent()
+    {
+        foreach(Enemy e in enemies)
+        {
+            e.ResetEnemy();
+        }
+
+        AckResetEnemyEvent.Invoke();
+    }
+
+    public CheckPointTrigger GetCheckPoint(string ID)
+    {
+        foreach(CheckPointTrigger check in checkPoints)
+        {
+            if(check.MatchID(ID))
+            {
+                return check;
+            }
+        }
+        return null;
     }
 }

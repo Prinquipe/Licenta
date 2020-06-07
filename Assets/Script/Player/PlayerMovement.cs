@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -13,32 +14,23 @@ public class PlayerMovement : MonoBehaviour
         DASHCOOLDOWN
     }
     public PlayerController controller;
-
     public PlayerState state;
-
     public static int MAXHP = 14;
-
     public Transform startPosition;
-
     public Animator animator;
-
     public float dashTimer;
-
     public float maxDashTime;
+    public const float maxDoubleDashTime = .5f;
+    public bool dash = false;
+    public DashState dashState;
+    public bool jump = false;
+    public bool doubleJump = false;
+    public string CheckPointScene;
 
     private float horizontalMove = 0f;
-
-    public DashState dashState;
-
-    public bool jump = false;
-
-    public bool doubleJump = false;
-
     private float doubleJumpTime;
 
-    public const float maxDoubleDashTime = .5f;
-
-    public bool dash = false;
+    
 
 
     [SerializeField] public float runSpeed;
@@ -46,10 +38,28 @@ public class PlayerMovement : MonoBehaviour
 
     void Awake()
     {
+        CheckPointScene = gameObject.scene.name;
         Debug.Log(state.HP);
         if(state.HP == 0)
         {
             state.HP = state.currentMaxHP;
+        }
+    }
+
+    void Start()
+    {
+        if(GameMgr.EnterFromMainMenu)
+        {
+            AssetManager asset = (AssetManager) GameObject.FindObjectOfType(typeof(AssetManager));
+            CheckPointTrigger check = asset.GetCheckPoint(state.m_CheckPointName);
+            if(check != null)
+            {
+                gameObject.transform.position = check.transform.position;
+            }
+            else
+            {
+                Debug.Log("Error in selecting checkPoint. Start at begining of Scene");
+            }
         }
     }
 
@@ -153,7 +163,24 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            //die
+            if(gameObject.scene.name.Equals(CheckPointScene))
+            {
+                AssetManager asset = (AssetManager)GameObject.FindObjectOfType(typeof(AssetManager));
+                CheckPointTrigger check = asset.GetCheckPoint(state.m_CheckPointName);
+                if (check != null)
+                {
+                    gameObject.transform.position = check.transform.position;
+                }
+                else
+                {
+                    Debug.Log("Error in selecting checkPoint. Start at begining of Scene");
+                }
+            }
+            else
+            {
+                DontDestroyOnLoad(gameObject);
+                SceneManager.LoadScene(CheckPointScene);
+            }
         }
     }
 

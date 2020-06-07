@@ -7,12 +7,14 @@ public class EnterTrigger : MonoBehaviour
     public GameObject player;
 
     private PlayerSave playerSave;
+    private AssetManager asset;
 
     private bool called;
     // Start is called before the first frame update
     void Awake()
     {
         playerSave = (PlayerSave)player.GetComponent<PlayerSave>();
+        asset = (AssetManager)GameObject.FindObjectOfType<AssetManager>();
         called = false;
     }
 
@@ -25,6 +27,7 @@ public class EnterTrigger : MonoBehaviour
                 called = true;
                 Debug.Log("Enter Trigger");
                 playerSave.SaveObject();
+                asset.LoadObject();
             }
         }
     }

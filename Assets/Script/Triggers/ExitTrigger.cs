@@ -29,7 +29,7 @@ public class ExitTrigger : MonoBehaviour
             interObj = other.gameObject;
             assetMgr.SaveObject();
             DontDestroyOnLoad(interObj);
-            //SceneManager.LoadScene(nextScene);
+            SceneManager.LoadScene(nextScene);
         }
     }
 
