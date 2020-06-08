@@ -26,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     public bool jump = false;
     public bool doubleJump = false;
     public string CheckPointScene;
+    public bool PlayerDied;
 
     private float horizontalMove = 0f;
     private float doubleJumpTime;
@@ -39,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
     void Awake()
     {
         CheckPointScene = gameObject.scene.name;
+        PlayerDied = false;
         Debug.Log(state.HP);
         if(state.HP == 0)
         {
@@ -156,12 +158,9 @@ public class PlayerMovement : MonoBehaviour
 
     public void TakeDamage(int damageValue)
     {
+        state.HP -= damageValue;
         Debug.Log("TakeDamage");
-        if (state.HP > 0)
-        {
-            state.HP -= damageValue;
-        }
-        else
+        if (state.HP <= 0)
         {
             if(gameObject.scene.name.Equals(CheckPointScene))
             {
@@ -170,6 +169,8 @@ public class PlayerMovement : MonoBehaviour
                 if (check != null)
                 {
                     gameObject.transform.position = check.transform.position;
+                    HealFull();
+                    PlayerDied = true;
                 }
                 else
                 {
@@ -182,6 +183,16 @@ public class PlayerMovement : MonoBehaviour
                 SceneManager.LoadScene(CheckPointScene);
             }
         }
+    }
+
+    public void HealOneBar()
+    {
+        state.HP++;
+    }
+
+    public void HealFull()
+    {
+        state.HP = state.currentMaxHP;
     }
 
     void FixedUpdate()

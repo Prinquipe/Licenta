@@ -10,8 +10,10 @@ public class CheckPointTrigger : MonoBehaviour
     public string CheckPointID;
     public GameObject player;
     public GameObject sprite;
+    public const float HEALTIMER = 0.5f;
 
 
+    private float HealTimer;
     private Animator animator;
     private PlayerMovement mov;
     private bool PlayerEntered;
@@ -36,6 +38,7 @@ public class CheckPointTrigger : MonoBehaviour
             ResetEnemyEvent = new UnityEvent();
         }
 
+        HealTimer = HEALTIMER;
         animator = (Animator)sprite.GetComponent<Animator>();
         mov = (PlayerMovement)player.GetComponent<PlayerMovement>();
         smolder = false;
@@ -62,10 +65,23 @@ public class CheckPointTrigger : MonoBehaviour
             {
                 state.m_IsActivated = true;
                 animator.SetBool("isActive", state.m_IsActivated);
-                mov.state.m_CheckPointName = CheckPointID;
-                ResetEnemyEvent.Invoke();
-                AckExpected = true;
-                mov.CheckPointScene = gameObject.scene.name; 
+            }
+            mov.state.m_CheckPointName = CheckPointID;
+            AckExpected = true;
+            mov.CheckPointScene = gameObject.scene.name;
+            ResetEnemyEvent.Invoke();
+        }
+
+        if(PlayerEntered && state.m_IsActivated)
+        {
+            if(HealTimer > 0)
+            {
+                HealTimer -= Time.deltaTime;
+            }
+            else if(mov.state.HP < mov.state.currentMaxHP)
+            {
+                mov.HealOneBar();
+                HealTimer = HEALTIMER;
             }
         }
     }
@@ -85,8 +101,13 @@ public class CheckPointTrigger : MonoBehaviour
     {
         if(other.CompareTag("PlayerDamage"))
         {
-            Debug.Log("Enter Campsite");
+            if(mov.PlayerDied)
+            {
+                mov.PlayerDied = false;
+                ResetEnemyEvent.Invoke();
+            }
             PlayerEntered = true;
+            HealTimer = HEALTIMER;
             smolder = true;
             animator.SetBool("isSmoldering", smolder);
         }
@@ -104,8 +125,10 @@ public class CheckPointTrigger : MonoBehaviour
 
     public void OnAckResetEnemyEvent()
     {
+        Debug.Log("Reset Done");
         if (AckExpected)
         {
+            Debug.Log("Save Enemy");
             AckExpected = false;
             RequestSaveEvent.Invoke();
         }

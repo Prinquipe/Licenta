@@ -10,7 +10,7 @@ using UnityEngine;
 public abstract class Enemy: MonoBehaviour
 {
     public EnemyState state;
-
+    public Vector2 startPoint;
     public string EnemyID;
 
     void Start()
@@ -34,6 +34,7 @@ public abstract class Enemy: MonoBehaviour
     public void ResetEnemy()
     {
         state.m_IsDead = false;
+        gameObject.transform.position = startPoint;
     }
 
     public abstract void TakeDamage(int damage);

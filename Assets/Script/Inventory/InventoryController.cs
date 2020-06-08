@@ -10,13 +10,15 @@ public class InventoryController: MonoBehaviour
 
     public int tempPouch;
 
+    public int Potions;
+
     public const int pouchTreshold = 100;
 
     public const float startTempTimer = 2f;
 
     private float tempTimer;
 
-    private const int MAXPOTIONS = 10;
+    private const int MAXPOTIONS = 3;
 
     private const int MINPOTIONS = 0;
 
@@ -29,6 +31,7 @@ public class InventoryController: MonoBehaviour
         reset = false;
         countDown = false;
         tempPouch = 0;
+        Potions = MAXPOTIONS;
     }
 
     void Update()
@@ -149,9 +152,9 @@ public class InventoryController: MonoBehaviour
 
     public bool addPotion()
     {
-        if(state.Potions < MAXPOTIONS)
+        if(Potions < MAXPOTIONS)
         {
-            state.Potions++;
+            Potions++;
             return true;
         }
         else
@@ -163,9 +166,9 @@ public class InventoryController: MonoBehaviour
 
     public void removePotion()
     {
-        if (state.Potions > MINPOTIONS )
+        if (Potions > MINPOTIONS )
         {
-            state.Potions--;
+            Potions--;
         }
         else
         {

@@ -24,6 +24,7 @@ public class FlyingEnemy : Enemy
     private const float IFRAME_TIME = 0.05f;
     private float IFrameTime;
     private bool damaged;
+    private bool calledOnce;
     private GoldPouch pouch;
 
     public Rigidbody2D m_RigidBody2D;
@@ -37,6 +38,12 @@ public class FlyingEnemy : Enemy
         pouch = (GoldPouch)gameObject.GetComponent<GoldPouch>();
     }
 
+    void Start()
+    {
+        calledOnce = !state.m_IsDead;
+        Debug.Log("Called Once:" + calledOnce);
+        startPoint = gameObject.transform.position;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -57,10 +64,7 @@ public class FlyingEnemy : Enemy
                 }
             }
         }
-        else
-        {
-
-        }
+        EnemyActive();
     }
 
     void Hover()
@@ -79,16 +83,29 @@ public class FlyingEnemy : Enemy
         }
     }
 
+    void EnemyActive()
+    {
+        if(calledOnce == state.m_IsDead)
+        {
+            calledOnce = !state.m_IsDead;
+            if(!calledOnce)
+            {
+                pouch.Empty();
+                m_RigidBody2D.velocity = Vector2.zero;
+            }
+            gameObject.GetComponent<SpriteRenderer>().enabled = calledOnce;
+            solidBox.enabled = calledOnce;
+            triggerBox.enabled = calledOnce;
+        }
+    }
+
     void Attack()
     {
-        Vector2 targetVelocity;
-        Vector2 m_Velocity = Vector2.zero;
         if (Vector2.Distance(transform.position, Player.position) <= m_MaxDistance)
         {
             m_AttackMode = true;
             facePlayer();
-            targetVelocity = new Vector2(-m_facingRight * m_Speed * Time.deltaTime, -m_isAbove * m_Speed * Time.deltaTime);
-            m_RigidBody2D.velocity = Vector2.SmoothDamp(m_RigidBody2D.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
+            m_RigidBody2D.position = Vector2.MoveTowards(m_RigidBody2D.position, Player.position, m_Speed * Time.deltaTime);
         }
     }
 
@@ -146,16 +163,12 @@ public class FlyingEnemy : Enemy
         if (HP > 0)
         {
             Debug.Log("ReduceHP");
-            m_RigidBody2D.AddForce(direction * thrust);
+            m_RigidBody2D.AddForce(direction * thrust, ForceMode2D.Impulse);
         }
         else
         {
-            pouch.Empty();
+            Debug.Log("Enemy Dead");
             state.m_IsDead = true;
-            gameObject.GetComponent<SpriteRenderer>().enabled = false;
-            solidBox.enabled = false;
-            triggerBox.enabled = false;
-            m_RigidBody2D.velocity = Vector2.zero;
         }
     }
 
