@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class InventoryController: MonoBehaviour
 {
@@ -26,8 +27,17 @@ public class InventoryController: MonoBehaviour
 
     private bool countDown;
 
+    [Header("Event")]
+    [Space]
+
+    public UnityEvent RequestSaveEvent;
+
     void Awake()
     {
+        if(RequestSaveEvent == null)
+        {
+            RequestSaveEvent = new UnityEvent();
+        }
         reset = false;
         countDown = false;
         tempPouch = 0;
@@ -53,8 +63,9 @@ public class InventoryController: MonoBehaviour
             {
                 tempTimer = startTempTimer;
                 state.Pouch += tempPouch;
-                tempPouch = 0;
                 countDown = false;
+                RequestSaveEvent.Invoke();
+                
             }
         }
     }
@@ -137,9 +148,7 @@ public class InventoryController: MonoBehaviour
         switch (type)
         {
             case GameEnums.KEY_TYPE.KEY_BRONZE:
-                Debug.Log("Before:"+state.BronzeKey);
                 state.BronzeKey++;
-                Debug.Log("After:" + state.BronzeKey);
                 break;
             case GameEnums.KEY_TYPE.KEY_SILVER:
                 state.SilverKey++;
@@ -178,8 +187,15 @@ public class InventoryController: MonoBehaviour
 
     public void AddCoin(int amount)
     {
-        Debug.Log("Add Coin "+ amount);
         reset = true;
         tempPouch += amount;
+    }
+
+    public void OnAckSavePlayerEvent()
+    {
+        if(tempPouch != 0)
+        {
+            tempPouch = 0;
+        }
     }
 }

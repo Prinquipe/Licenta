@@ -120,17 +120,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state:
-    m_EnemyID: FlyingEnemy_1
+    m_EnemyID: FLY_AREA01_02
     m_IsDead: 0
     m_IsBoss: 0
-  EnemyID: FlyingEnemy_1
+  startPoint: {x: 0, y: 0}
+  EnemyID: FLY_AREA01_02
   HP: 2
-  m_startPosition: {fileID: 0}
-  m_Speed: 150
-  m_MaxDistance: 5
+  m_Speed: 2
+  m_MaxDistance: 7
   Player: {fileID: 0}
   m_MovementSmoothing: 0.02
-  thrust: 200
+  thrust: 0
   solidBox: {fileID: 3583010749720182405}
   triggerBox: {fileID: 3583010749720182402}
   m_RigidBody2D: {fileID: 3583010749720182406}
@@ -157,7 +157,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3583010749720182427}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0

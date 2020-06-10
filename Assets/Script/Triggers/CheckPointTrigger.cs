@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 public class CheckPointTrigger : MonoBehaviour
 {
@@ -10,13 +11,18 @@ public class CheckPointTrigger : MonoBehaviour
     public string CheckPointID;
     public GameObject player;
     public GameObject sprite;
+    public Image blackScreen;
+    public const float FADETIME = 1f;
     public const float HEALTIMER = 0.5f;
+    public static bool PlayerEntered;
+    public float step;
+    public AssetManager asset;
 
-
+    private float initAlpha;
+    private float FadeTime;
     private float HealTimer;
     private Animator animator;
     private PlayerMovement mov;
-    private bool PlayerEntered;
     private bool smolder;
     private bool AckExpected;
 
@@ -29,7 +35,9 @@ public class CheckPointTrigger : MonoBehaviour
 
     void Awake()
     {
-        if(RequestSaveEvent == null)
+        initAlpha = 1f;
+        PlayerEntered = false;
+        if (RequestSaveEvent == null)
         {
             RequestSaveEvent = new UnityEvent();
         }
@@ -38,6 +46,7 @@ public class CheckPointTrigger : MonoBehaviour
             ResetEnemyEvent = new UnityEvent();
         }
 
+        FadeTime = FADETIME;
         HealTimer = HEALTIMER;
         animator = (Animator)sprite.GetComponent<Animator>();
         mov = (PlayerMovement)player.GetComponent<PlayerMovement>();
@@ -50,15 +59,14 @@ public class CheckPointTrigger : MonoBehaviour
     {
         if(state.m_IsActivated)
         {
-            smolder = state.m_IsActivated;
-            animator.SetBool("isSmoldering", smolder);
+            animator.SetBool("isSmoldering", state.m_IsActivated);
             animator.SetBool("isActive", state.m_IsActivated);
         }
     }
 
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.E) && PlayerEntered)
+        if(Input.GetKeyDown(KeyCode.E) && smolder)
         {
             Debug.Log("Pressed E");
             if (!state.m_IsActivated)
@@ -72,7 +80,7 @@ public class CheckPointTrigger : MonoBehaviour
             ResetEnemyEvent.Invoke();
         }
 
-        if(PlayerEntered && state.m_IsActivated)
+        if(smolder && state.m_IsActivated)
         {
             if(HealTimer > 0)
             {
@@ -82,6 +90,16 @@ public class CheckPointTrigger : MonoBehaviour
             {
                 mov.HealOneBar();
                 HealTimer = HEALTIMER;
+            }
+        }
+
+        FadeTime -= Time.deltaTime;
+        if (FadeTime > 0 && PlayerEntered)
+        {
+            initAlpha -= step;
+            if (initAlpha < 1f)
+            {
+                blackScreen.color = new Color(0f, 0f, 0f, initAlpha);
             }
         }
     }
@@ -106,7 +124,11 @@ public class CheckPointTrigger : MonoBehaviour
                 mov.PlayerDied = false;
                 ResetEnemyEvent.Invoke();
             }
-            PlayerEntered = true;
+            else if(!PlayerEntered)
+            {
+                ResetEnemyEvent.Invoke();
+            }
+            
             HealTimer = HEALTIMER;
             smolder = true;
             animator.SetBool("isSmoldering", smolder);
@@ -117,7 +139,6 @@ public class CheckPointTrigger : MonoBehaviour
     {
         if (other.CompareTag("PlayerDamage"))
         {
-            PlayerEntered = false;
             smolder = false;
             animator.SetBool("isSmoldering", smolder);
         }
@@ -134,6 +155,14 @@ public class CheckPointTrigger : MonoBehaviour
         }
     }
 
+    public void OnAckSaveAssetEvent()
+    {
+        if(!PlayerEntered)
+        {
+            PlayerEntered = true;
+            asset.LoadObject();
+        }
+    }
 
     public Transform GetPosition()
     {

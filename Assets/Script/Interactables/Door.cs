@@ -50,16 +50,11 @@ public class Door : MonoBehaviour, Interactable
         }
     }
 
-    public void Open()
+    public void Interact()
     {
         state.m_IsLocked = false;
         state.m_IsClosed = false;
         RequestSaveEvent.Invoke();
-    }
-
-    public void Interact()
-    {
-        Open();
     }
 
     void OnTriggerEnter2D(Collider2D other)

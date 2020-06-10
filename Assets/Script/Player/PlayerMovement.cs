@@ -1,6 +1,7 @@
 ﻿ using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -30,7 +31,8 @@ public class PlayerMovement : MonoBehaviour
 
     private float horizontalMove = 0f;
     private float doubleJumpTime;
-
+    private Transform startPoint;
+    private Rigidbody2D rigidBody;
     
 
 
@@ -41,6 +43,7 @@ public class PlayerMovement : MonoBehaviour
     {
         CheckPointScene = gameObject.scene.name;
         PlayerDied = false;
+        rigidBody = (Rigidbody2D)gameObject.GetComponent<Rigidbody2D>();
         Debug.Log(state.HP);
         if(state.HP == 0)
         {
@@ -50,17 +53,18 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
+        startPoint = gameObject.transform;
         if(GameMgr.EnterFromMainMenu)
         {
             AssetManager asset = (AssetManager) GameObject.FindObjectOfType(typeof(AssetManager));
             CheckPointTrigger check = asset.GetCheckPoint(state.m_CheckPointName);
             if(check != null)
             {
-                gameObject.transform.position = check.transform.position;
+                rigidBody.position = check.transform.position;
             }
             else
             {
-                Debug.Log("Error in selecting checkPoint. Start at begining of Scene");
+                rigidBody.position = startPoint.position;
             }
         }
     }
@@ -159,7 +163,7 @@ public class PlayerMovement : MonoBehaviour
     public void TakeDamage(int damageValue)
     {
         state.HP -= damageValue;
-        Debug.Log("TakeDamage");
+        Debug.Log("Current HP:"+state.HP);
         if (state.HP <= 0)
         {
             if(gameObject.scene.name.Equals(CheckPointScene))
@@ -168,13 +172,13 @@ public class PlayerMovement : MonoBehaviour
                 CheckPointTrigger check = asset.GetCheckPoint(state.m_CheckPointName);
                 if (check != null)
                 {
-                    gameObject.transform.position = check.transform.position;
+                    rigidBody.position = check.transform.position;
                     HealFull();
                     PlayerDied = true;
                 }
                 else
                 {
-                    Debug.Log("Error in selecting checkPoint. Start at begining of Scene");
+                    SceneManager.LoadScene(gameObject.scene.name);
                 }
             }
             else

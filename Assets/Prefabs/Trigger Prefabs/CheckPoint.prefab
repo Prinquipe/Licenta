@@ -50,6 +50,10 @@ MonoBehaviour:
     m_IsActivated: 0
   CheckPointID: CheckPointID
   player: {fileID: 0}
+  sprite: {fileID: 6301329432080231242}
+  blackScreen: {fileID: 0}
+  step: 0.04
+  asset: {fileID: 0}
   RequestSaveEvent:
     m_PersistentCalls:
       m_Calls:

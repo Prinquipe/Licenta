@@ -1,11 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 public class FlyingEnemy : Enemy
 {
     public int HP;
-    public Transform m_startPosition;
     public float m_Speed;//to be tweeked
     public const float m_StartWaitTime = 50f;//to be tweeked
     public float m_MaxDistance;// to be tweeked
@@ -25,6 +25,7 @@ public class FlyingEnemy : Enemy
     private float IFrameTime;
     private bool damaged;
     private bool calledOnce;
+    private bool pouchEmpty;
     private GoldPouch pouch;
 
     public Rigidbody2D m_RigidBody2D;
@@ -40,8 +41,8 @@ public class FlyingEnemy : Enemy
 
     void Start()
     {
-        calledOnce = !state.m_IsDead;
-        Debug.Log("Called Once:" + calledOnce);
+        calledOnce = state.m_IsDead;
+        pouchEmpty = true;
         startPoint = gameObject.transform.position;
     }
     // Update is called once per frame
@@ -88,8 +89,9 @@ public class FlyingEnemy : Enemy
         if(calledOnce == state.m_IsDead)
         {
             calledOnce = !state.m_IsDead;
-            if(!calledOnce)
+            if(!pouchEmpty)
             {
+                pouchEmpty = true;
                 pouch.Empty();
                 m_RigidBody2D.velocity = Vector2.zero;
             }
@@ -120,12 +122,12 @@ public class FlyingEnemy : Enemy
     void facePlayer()
     {
         bool right = true;
-        if (transform.position.x - Player.position.x > .25f)
+        if (transform.position.x - Player.position.x > .1f)
         {
             m_facingRight = 1;
             right = true;
         }
-        else if (transform.position.x - Player.position.x < .25f)
+        else if (transform.position.x - Player.position.x < .1f)
         {
             m_facingRight = -1;
             right = false;
@@ -135,11 +137,11 @@ public class FlyingEnemy : Enemy
             m_facingRight = 0;
         }
 
-        if (transform.position.y - Player.position.y > .25f)
+        if (transform.position.y - Player.position.y > .1f)
         {
             m_isAbove = 1;
         }
-        else if (transform.position.y - Player.position.y < .25f)
+        else if (transform.position.y - Player.position.y < .1f)
         {
             m_isAbove = -1;
         }
@@ -157,24 +159,21 @@ public class FlyingEnemy : Enemy
 
     public override void TakeDamage(int damage)
     {
-        Debug.Log("TakingDamage");
         Vector2 direction = new Vector2(-m_facingRight,-m_isAbove);
         HP -= damage;
         if (HP > 0)
         {
-            Debug.Log("ReduceHP");
             m_RigidBody2D.AddForce(direction * thrust, ForceMode2D.Impulse);
         }
         else
         {
-            Debug.Log("Enemy Dead");
             state.m_IsDead = true;
+            pouchEmpty = false;
         }
     }
 
-    void OnEnterTrigger2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log(other.tag);
         if (other.CompareTag("PlayerDamage"))
         {
             PlayerInteraction inter;

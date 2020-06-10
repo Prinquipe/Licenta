@@ -98,7 +98,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8307370278977106039}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 1.88, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8307370279177902913}
@@ -114,7 +114,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -131,11 +131,11 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 6
+  orthographic size: 5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 32545
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -170,6 +170,7 @@ GameObject:
   - component: {fileID: 8307370279177902918}
   - component: {fileID: 8307370279177902919}
   - component: {fileID: 8307370279177902917}
+  - component: {fileID: 2065412914}
   m_Layer: 11
   m_Name: Player
   m_TagString: Player
@@ -284,15 +285,18 @@ MonoBehaviour:
     hasDoubleJump: 1
     hasDashAbility: 1
     sceneName: 
+    m_CheckPointName: 
     money: 0
   startPosition: {fileID: 0}
   animator: {fileID: 8307370279177902922}
   dashTimer: 0
   maxDashTime: 0.25
+  dash: 0
   dashState: 0
   jump: 0
   doubleJump: 0
-  dash: 0
+  CheckPointScene: 
+  PlayerDied: 0
   runSpeed: 900
 --- !u!114 &8307370279177902918
 MonoBehaviour:
@@ -307,7 +311,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_JumpForce: 30
-  m_DoubleJumpForce: 20
+  m_DoubleJumpForce: 25
   m_DashSpeed: 1600
   playerAttack: {fileID: 0}
   m_MovementSmoothing: 0.053
@@ -347,7 +351,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0
   m_GravityScale: 3
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: fa3c04d10e28195428c5dc7f67a25eb5, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
@@ -365,7 +369,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.050140053, y: 0.00805521}
+  m_Offset: {x: -0.050140053, y: 0.22506487}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -376,8 +380,24 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.5487618, y: 1.773294}
+  m_Size: {x: 0.5487618, y: 1.3392746}
   m_EdgeRadius: 0
+--- !u!58 &2065412914
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8307370279177902915}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.68}
+  serializedVersion: 2
+  m_Radius: 0.21051097
 --- !u!1 &8307370279492419081
 GameObject:
   m_ObjectHideFlags: 0
@@ -424,7 +444,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.0390563, y: 0.028662205}
+  m_Offset: {x: -0.025957108, y: -0.0019054413}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -435,7 +455,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.0574958, y: 1.8181028}
+  m_Size: {x: 0.62955093, y: 1.7569675}
   m_EdgeRadius: 0
 --- !u!114 &8307370279492419084
 MonoBehaviour:
@@ -466,10 +486,25 @@ MonoBehaviour:
     BronzeKey: 0
     SilverKey: 0
     GoldKey: 0
-    Potions: 0
     Pouch: 0
     doubleDashItem: 0
     doubleJumpItem: 0
+  tempPouch: 0
+  Potions: 0
+  RequestSaveEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_MethodName: OnRequestSaveEvent
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8307370280134545675
 GameObject:
   m_ObjectHideFlags: 0

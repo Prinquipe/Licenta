@@ -5,101 +5,185 @@ using UnityEngine;
 public class SimpleEnemy : Enemy
 {
     public int HP;
-    public float m_Speed = 50f;//to be tweeked
-    public const float m_StartWaitTime = 50f;//to be tweeked
-    public const float m_MinDistence = 0.2f;//to be tweeked
-    public Transform m_startPosition;
-    public Transform m_stopPosition;
+    public float m_Speed;//to be tweeked
+    public const float WAITTIME = 2f;//to be tweeked
+    public float m_MaxDistance;// to be tweeked
+    public float m_MinDistance;
+    public const int PLAYER_DAMAGE = 1;
+    public BoxCollider2D solidBox;
+    public BoxCollider2D triggerBox;
+    public Transform startPosition;
+    public Transform endPosition;
 
-    private BoxCollider2D box;
+    private Animator animator;
+    private Transform currentGoal;
+    private bool reachedGoal;
     private float m_WaitTime;
-    [SerializeField] private Rigidbody2D m_Rigidbody2D;
-
-    private Transform m_targetPosition;
-    private bool m_facingRight = true;
-    // Start is called before the first frame update
+    private int m_facingRight;
+    private int m_isAbove;
+    private const float IFRAME_TIME = 0.05f;
+    private float IFrameTime;
+    private bool damaged;
+    private bool calledOnce;
+    private GoldPouch pouch;
+    private bool pouchEmpty;
+    private Rigidbody2D m_RigidBody2D;
 
     void Awake()
     {
-        m_WaitTime = m_StartWaitTime;
-        m_targetPosition = m_startPosition;
-        if (m_Rigidbody2D == null)
-        {
-            m_Rigidbody2D = GetComponent<Rigidbody2D>();
-        }
-        box = (BoxCollider2D)GetComponent<BoxCollider2D>();
+        startPosition.SetParent(null, true);
+        endPosition.SetParent(null, true);
+        currentGoal = endPosition;
+        reachedGoal = false;
+        damaged = false;
+        IFrameTime = IFRAME_TIME;
+        m_WaitTime = WAITTIME;
+        pouch = (GoldPouch)gameObject.GetComponent<GoldPouch>();
+        m_RigidBody2D = (Rigidbody2D)gameObject.GetComponent<Rigidbody2D>();
+        animator = (Animator)gameObject.GetComponent<Animator>();
     }
 
+    void Start()
+    {
+        calledOnce = state.m_IsDead;
+        pouchEmpty = true;
+        Debug.Log("calledOnce:" + calledOnce + " ID:" + EnemyID);
+        startPoint = gameObject.transform.position;
+        animator.SetBool("isWalking", true);
+    }
     // Update is called once per frame
     void Update()
     {
-        if(!state.m_IsDead)
+        EnemyActive();
+        if (!state.m_IsDead)
         {
             Patrol();
+            Wait();
+            if (damaged)
+            {
+                if (IFrameTime > 0)
+                {
+                    IFrameTime -= Time.deltaTime;
+                }
+                else
+                {
+                    IFrameTime = IFRAME_TIME;
+                    damaged = false;
+                }
+            }
+        }
+    }
+
+    void Wait()
+    {
+        if (reachedGoal)
+        {
+            animator.SetBool("isWalking", !reachedGoal);
+            if (m_WaitTime >= 0)
+            {
+                m_WaitTime -= Time.deltaTime;
+            }
+            else
+            {
+                m_WaitTime = WAITTIME;
+                reachedGoal = false;
+                animator.SetBool("isWalking", !reachedGoal);
+                Flip();
+            }
+            
+        }
+    }
+
+    void EnemyActive()
+    {
+        if (calledOnce == state.m_IsDead)
+        {
+            calledOnce = !state.m_IsDead;
+            Debug.Log("EnemyActive calledOnce:" + calledOnce + " ID:" + EnemyID);
+            if (!pouchEmpty)
+            {
+                pouch.Empty();
+                pouchEmpty = true;
+                m_RigidBody2D.velocity = Vector2.zero;
+            }
+            gameObject.GetComponent<SpriteRenderer>().enabled = calledOnce;
+            solidBox.enabled = calledOnce;
+            triggerBox.enabled = calledOnce;
         }
     }
 
     void Patrol()
     {
-        if (transform.position.x < m_targetPosition.position.x)
+        if (Mathf.Abs(transform.position.x - currentGoal.position.x) <= m_MinDistance)
         {
-            Vector2.MoveTowards(transform.position, m_targetPosition.position, m_Speed * Time.deltaTime);
-        }
-        else if(transform.position.x > m_targetPosition.position.x)
-        {
-            Vector2.MoveTowards(transform.position, m_targetPosition.position, m_Speed * Time.deltaTime);
-        }
-        else if(Vector2.Distance(transform.position,m_targetPosition.position)< m_MinDistence) //needs tweeking
-        {
-            if(m_WaitTime <= 0)
+            reachedGoal = true;
+
+            if (currentGoal == startPosition)
             {
-                SwitchTargetPosition();
-                Flip();
-                m_WaitTime = m_StartWaitTime;
-            } else
+                currentGoal = endPosition;
+            }
+            else
             {
-                m_WaitTime -= Time.deltaTime;
+                currentGoal = startPosition;
+            }
+        }
+        else if(!reachedGoal)
+        {
+            m_RigidBody2D.position = Vector2.MoveTowards(m_RigidBody2D.position, currentGoal.position, m_Speed * Time.deltaTime);
+        }
+    }
+
+    void Flip()
+    {
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+    }
+
+    public override void TakeDamage(int damage)
+    {
+        HP -= damage;
+        if (HP <= 0)
+        {
+            state.m_IsDead = true;
+            pouchEmpty = false;
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        Debug.Log(other.tag);
+        if (other.CompareTag("PlayerDamage"))
+        {
+            PlayerInteraction inter;
+            inter = (PlayerInteraction)other.gameObject.GetComponent<PlayerInteraction>();
+            inter.TakeDamage(PLAYER_DAMAGE);
+        }
+        else if (other.CompareTag("PlayerAttack"))
+        {
+            if (!damaged)
+            {
+                damaged = true;
+                TakeDamage(PlayerAttack.AttackDamage);
             }
         }
     }
 
-    void SwitchTargetPosition()
+    void OnTriggerStay2D(Collider2D other)
     {
-        if(m_targetPosition == m_startPosition)
+        if (other.CompareTag("PlayerDamage"))
         {
-            m_facingRight = true;
-            m_targetPosition = m_stopPosition;
+            PlayerInteraction inter;
+            inter = (PlayerInteraction)other.gameObject.GetComponent<PlayerInteraction>();
+            inter.TakeDamage(PLAYER_DAMAGE);
         }
-        else
+        else if (other.CompareTag("PlayerAttack"))
         {
-            m_facingRight = false;
-            m_targetPosition = m_startPosition;
+            if (!damaged)
+            {
+                damaged = true;
+                TakeDamage(PlayerAttack.AttackDamage);
+            }
         }
     }
-
-   void Flip()
-   {
-        if(m_facingRight)
-        {
-            //scale one
-        }
-        else
-        {
-            //scale -1
-        }
-   }
-
-   public override void TakeDamage(int damage)
-   {
-        HP -= damage;
-        if(HP > 0)
-        {
-        }
-        else
-        {
-            state.m_IsDead = true;
-            gameObject.GetComponent<SpriteRenderer>().enabled = false;
-            box.enabled = false;
-        }
-   }
 }

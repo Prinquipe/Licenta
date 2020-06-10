@@ -16,26 +16,24 @@ public class EnterTrigger : MonoBehaviour
     private float FadeTime;
     private PlayerSave playerSave;
     private AssetManager asset;
-    private bool called;
     // Start is called before the first frame update
     void Awake()
     {
         initAlpha = 1f;
         playerSave = (PlayerSave)player.GetComponent<PlayerSave>();
         asset = (AssetManager)GameObject.FindObjectOfType<AssetManager>();
-        called = false;
         FadeTime = 0f;
     }
 
     void Start()
     {
         blackScreen.enabled = true;
-        blackScreen.color = new Color(0f, 0f, 0f, 1f);
+        blackScreen.color = new Color(0f, 0f, 0f, initAlpha);
     }
 
     void Update()
     {
-        if (FadeTime > 0 && called)
+        if (FadeTime > 0 && CheckPointTrigger.PlayerEntered)
         {
             initAlpha -= step;
             if (initAlpha < 1f)
@@ -51,25 +49,13 @@ public class EnterTrigger : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
-            if (!called)
+            if (!CheckPointTrigger.PlayerEntered)
             {
-                called = true;
-                Debug.Log("Enter Trigger");
+                CheckPointTrigger.PlayerEntered = true;
                 FadeTime = FADETIME;
                 asset.LoadObject();
             }
 
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (called)
-        {
-            if (other.CompareTag("Player"))
-            {
-                called = false;
-            }
         }
     }
 }
